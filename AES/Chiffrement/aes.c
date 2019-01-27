@@ -33,16 +33,40 @@ uchar W[176] = {
 
 /* Le bloc à chiffrer aujourd'hui: 16 octets nuls */
 uchar State[16] = {
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00} ;
+  0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 
+  0x00, 0x00, 0x00, 0x00, 
+  0x00, 0x00, 0x00, 0x00} ;
 
 uchar Default_State[16] = {
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00} ;
+  0x00, 0x00, 0x00, 0x00, 
+  0x00, 0x00, 0x00, 0x00, 
+  0x00, 0x00, 0x00, 0x00, 
+  0x00, 0x00, 0x00, 0x00} ;
 
 uchar SB_State[16] = {
-  0x00, 0x01, 0x02, 0x03, 0x00, 0x01, 0x02, 0x03, 0x00, 0x01, 0x02, 0x03, 0x00, 0x01, 0x02, 0x03};
+  0x00, 0x01, 0x02, 0x03, 
+  0x00, 0x01, 0x02, 0x03, 
+  0x00, 0x01, 0x02, 0x03, 
+  0x00, 0x01, 0x02, 0x03};
 
-uchar Sh_State[16] = {
-  0xA0, 0xB0, 0xC0, 0xD0, 0xA1, 0xB1, 0xC1, 0xD1, 0xA2, 0xB2, 0xC2, 0xD2, 0xA3, 0xB3, 0xC3, 0xD3};
+uchar SR_State[16] = {
+  0xA0, 0xB0, 0xC0, 0xD0,
+  0xA1, 0xB1, 0xC1, 0xD1,
+  0xA2, 0xB2, 0xC2, 0xD2,
+  0xA3, 0xB3, 0xC3, 0xD3};
+
+uchar MC_State[16] = {
+  0x0E, 0x0B, 0x0D, 0x09,
+  0x0B, 0x0E, 0x0B, 0x0D,
+  0x0D, 0x0B, 0x0E, 0x0B,
+  0x09, 0x0D, 0x0B, 0x0E};
+
+uchar ARK_State[16] = {
+  0xFF, 0xFF, 0xFF, 0xFF,
+  0xFF, 0xFF, 0xFF, 0xFF,
+  0xFF, 0xFF, 0xFF, 0xFF,
+  0xFF, 0xFF, 0xFF, 0xFF};
 
 /* Déclaration des 4 transformations à implémenter */
 void SubBytes(void);
@@ -54,27 +78,42 @@ void AddRoundKey(int r);
 void chiffrer(void);
 void afficher_le_bloc(uchar *M);
 
-int main(void) {
+int main(void) {/*
   memmove(State,SB_State,sizeof(State));
   printf("Le bloc \"SB_State\" en entrée vaut : \n");
   afficher_le_bloc(State);
   SubBytes();
   printf("Le bloc \"SB_State\" en sortie vaut : \n");
-  afficher_le_bloc(State);
-
-  memmove(State,Sh_State,sizeof(State));
-  printf("Le bloc \"Sh_State\" en entrée vaut : \n");
+  afficher_le_bloc(State);*/
+/*
+  memmove(State,SR_State,sizeof(State));
+  printf("Le bloc \"SR_State\" en entrée vaut : \n");
   afficher_le_bloc(State);
   ShiftRows();
-  printf("Le bloc \"Sh_State\" en sortie vaut : \n");
+  printf("Le bloc \"SR_State\" en sortie vaut : \n");
+  afficher_le_bloc(State);*/
+/*
+  memmove(State,MC_State,sizeof(State));
+  printf("Le bloc \"MC_State\" en entrée vaut : \n");
+  afficher_le_bloc(State);
+  MixColumns();
+  printf("Le bloc \"MC_State\" en sortie vaut : \n");
+  afficher_le_bloc(State);
+*/
+  memmove(State,ARK_State,sizeof(State));
+  printf("Le bloc \"ARK_State\" en entrée vaut : \n");
+  afficher_le_bloc(State);
+  AddRoundKey(1);
+  printf("Le bloc \"ARK_State\" en sortie vaut : \n");
   afficher_le_bloc(State);
 
+/*
   memmove(State,Default_State,sizeof(State));
   printf("Le bloc \"State\" en entrée vaut : \n");
   afficher_le_bloc(State);
   chiffrer();
   printf("Le bloc \"State\" en sortie vaut : \n");
-  afficher_le_bloc(State);
+  afficher_le_bloc(State);*/
   exit(EXIT_SUCCESS);
 }
 
@@ -82,7 +121,8 @@ void afficher_le_bloc(uchar *M) {
   for (int i=0; i<4; i++) { // Lignes 0 à 3
     printf("          ");
     for (int j=0; j<4; j++) { // Colonnes 0 à 3
-      printf ("%02X ", M[4*j+i]); }
+      printf ("%02X ", M[4*j+i]); 
+    }
     printf("\n");
   }
 }
@@ -151,15 +191,52 @@ void SubBytes(void){
 };
 
 void ShiftRows(void){
-  for(int i = 0; i < longueur_de_la_clef; ++i){
-    int shift = i%4;
-    printf("pos = %d\n", i-(4*shift));
-    State[i] = State[i-(4*shift)];//Faux (pos neg)
+  int posNew;
+  int posOld;
+  for(int i = 1; i < 4; ++i){
+    int line = i;
+    for(int k = 0; k < line; ++k){
+      for(int j = 0; j < 4; ++j){
+        //ShiftOnce(line);
+
+        posNew = i+j*4;
+        if(j < line)
+          posOld = longueur_de_la_clef - 4*line + posNew;
+        else
+          posOld = posNew - 4;
+        uchar temp = State[posNew];
+        printf ("temp = %02X ", temp);
+        printf ("new = %02X ", State[posNew]);
+        printf ("old = %02X ", State[posOld]);
+        
+        printf("%d , %d\n", posNew, posOld);
+        State[posNew] = State[posOld];
+        if(j < 3){
+          State[posOld] = temp;
+        }else{
+          State[posNew] = temp;
+        }
+      }
+    }
   }
 };
 
-void MixColumns(void){};
-void AddRoundKey(int r){};
+uchar MixCol_State[16] = {
+  0x02, 0x03, 0x01, 0x01,
+  0x01, 0x02, 0x03, 0x01,
+  0x01, 0x01, 0x02, 0x03,
+  0x03, 0x01, 0x02, 0x02};
+
+
+void MixColumns(void){
+
+};
+
+void AddRoundKey(int r){
+  for(int i = 0; i < longueur_de_la_clef; ++i){
+    State[i] = State[i] ^ W[(r*16)+i];
+  }
+};
 
 /* Pour compiler:
   $ make
