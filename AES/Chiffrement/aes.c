@@ -92,21 +92,21 @@ int main(void) {/*
   ShiftRows();
   printf("Le bloc \"SR_State\" en sortie vaut : \n");
   afficher_le_bloc(State);*/
-/*
+
   memmove(State,MC_State,sizeof(State));
   printf("Le bloc \"MC_State\" en entrée vaut : \n");
   afficher_le_bloc(State);
   MixColumns();
   printf("Le bloc \"MC_State\" en sortie vaut : \n");
   afficher_le_bloc(State);
-*/
+/*
   memmove(State,ARK_State,sizeof(State));
   printf("Le bloc \"ARK_State\" en entrée vaut : \n");
   afficher_le_bloc(State);
   AddRoundKey(1);
   printf("Le bloc \"ARK_State\" en sortie vaut : \n");
   afficher_le_bloc(State);
-
+*/
 /*
   memmove(State,Default_State,sizeof(State));
   printf("Le bloc \"State\" en entrée vaut : \n");
@@ -196,20 +196,14 @@ void ShiftRows(void){
   for(int i = 1; i < 4; ++i){
     int line = i;
     for(int k = 0; k < line; ++k){
-      for(int j = 0; j < 4; ++j){
-        //ShiftOnce(line);
 
+      for(int j = 0; j < 4; ++j){
         posNew = i+j*4;
         if(j < line)
           posOld = longueur_de_la_clef - 4*line + posNew;
         else
           posOld = posNew - 4;
         uchar temp = State[posNew];
-        printf ("temp = %02X ", temp);
-        printf ("new = %02X ", State[posNew]);
-        printf ("old = %02X ", State[posOld]);
-        
-        printf("%d , %d\n", posNew, posOld);
         State[posNew] = State[posOld];
         if(j < 3){
           State[posOld] = temp;
@@ -225,10 +219,26 @@ uchar MixCol_State[16] = {
   0x02, 0x03, 0x01, 0x01,
   0x01, 0x02, 0x03, 0x01,
   0x01, 0x01, 0x02, 0x03,
-  0x03, 0x01, 0x02, 0x02};
+  0x03, 0x01, 0x01, 0x02};
 
 
 void MixColumns(void){
+  for (int i = 0; i < 4; ++i)
+  {
+    for (int j = 0; j < 4; ++j)
+    {
+      int pos = 4*j+i;
+      uchar tempVals[4];
+      for (int k = j*4; k < 4+4*j; ++k)
+      {
+        int posCol = 4*(k%4)+i;
+        //printf ("%02X \n", MixCol_State[k]); 
+        tempVals[k%4] = gmul(MixCol_State[k],State[posCol]);
+      }
+      uchar tempCell = tempVals[0] ^ tempVals[1] ^ tempVals[2] ^ tempVals[3]; 
+      State[pos] = tempCell; 
+    }
+  }
 
 };
 
