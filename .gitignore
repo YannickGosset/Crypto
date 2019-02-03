@@ -20,3 +20,4 @@ RC4/RC4_en_Java/Makefile
 RC4/RC4_en_Java/MonRC4.java
 HMAC/._info_hex.txt
 HMAC/._RFC_2104.pdf
+pkcs5.c

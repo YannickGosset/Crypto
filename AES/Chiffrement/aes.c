@@ -232,12 +232,17 @@ void MixColumns(void){
       for (int k = j*4; k < 4+4*j; ++k)
       {
         int posCol = 4*(k%4)+i;
-        //printf ("%02X \n", MixCol_State[k]); 
+        printf ("%02X * %02X", MixCol_State[k], State[posCol]); 
+        if(k < 3+4*j){
+          printf(" + ");
+        }
         tempVals[k%4] = gmul(MixCol_State[k],State[posCol]);
       }
       uchar tempCell = tempVals[0] ^ tempVals[1] ^ tempVals[2] ^ tempVals[3]; 
+      printf(" = %02X\n", tempCell);
       State[pos] = tempCell; 
     }
+      printf("\n");
   }
 
 };
