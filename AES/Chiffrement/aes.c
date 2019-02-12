@@ -99,21 +99,21 @@ int main(void) {/*
   MixColumns();
   printf("Le bloc \"MC_State\" en sortie vaut : \n");
   afficher_le_bloc(State);
-/*
+
   memmove(State,ARK_State,sizeof(State));
   printf("Le bloc \"ARK_State\" en entrée vaut : \n");
   afficher_le_bloc(State);
   AddRoundKey(1);
   printf("Le bloc \"ARK_State\" en sortie vaut : \n");
   afficher_le_bloc(State);
-*/
-/*
+
+
   memmove(State,Default_State,sizeof(State));
   printf("Le bloc \"State\" en entrée vaut : \n");
   afficher_le_bloc(State);
   chiffrer();
   printf("Le bloc \"State\" en sortie vaut : \n");
-  afficher_le_bloc(State);*/
+  afficher_le_bloc(State);
   exit(EXIT_SUCCESS);
 }
 
@@ -219,32 +219,45 @@ uchar MixCol_State[16] = {
   0x02, 0x03, 0x01, 0x01,
   0x01, 0x02, 0x03, 0x01,
   0x01, 0x01, 0x02, 0x03,
-  0x03, 0x01, 0x01, 0x02};
+  0x03, 0x01, 0x01, 0x02
+};
 
 
 void MixColumns(void){
+
+  uchar tempVals[4];
   for (int i = 0; i < 4; ++i)
-  {
+  { 
     for (int j = 0; j < 4; ++j)
     {
       int pos = 4*j+i;
-      uchar tempVals[4];
       for (int k = j*4; k < 4+4*j; ++k)
       {
         int posCol = 4*(k%4)+i;
-        printf ("%02X * %02X", MixCol_State[k], State[posCol]); 
-        if(k < 3+4*j){
+        //printf ("%02X * %02X", MixCol_State[k], State[posCol]); 
+        /*if(k < 3+4*j){
           printf(" + ");
-        }
+        }*/
         tempVals[k%4] = gmul(MixCol_State[k],State[posCol]);
       }
       uchar tempCell = tempVals[0] ^ tempVals[1] ^ tempVals[2] ^ tempVals[3]; 
-      printf(" = %02X\n", tempCell);
+      //printf(" = %02X\n", tempCell);
       State[pos] = tempCell; 
     }
-      printf("\n");
+      //printf("\n");
   }
-
+  /*
+  uchar b[4];
+  for (int i = 0; i < 4; i++) {
+    b[0] =  (gmul(State[i * 4], MixCol_State[0]) ^ gmul(State[i * 4 + 1], MixCol_State[1]) ^ gmul(State[i * 4 + 2], MixCol_State[2]) ^ gmul(State[i * 4 + 3], MixCol_State[3]));
+    b[1] =  (gmul(State[i * 4], MixCol_State[4]) ^ gmul(State[i * 4 + 1], MixCol_State[5]) ^ gmul(State[i * 4 + 2], MixCol_State[6]) ^ gmul(State[i * 4 + 3], MixCol_State[7]));
+    b[2] =  (gmul(State[i * 4], MixCol_State[8]) ^ gmul(State[i * 4 + 1], MixCol_State[9]) ^ gmul(State[i * 4 + 2], MixCol_State[10]) ^ gmul(State[i * 4 + 3], MixCol_State[11]));
+    b[3] =  (gmul(State[i * 4], MixCol_State[12]) ^ gmul(State[i * 4 + 1], MixCol_State[13]) ^ gmul(State[i * 4 + 2], MixCol_State[14]) ^ gmul(State[i * 4 + 3], MixCol_State[15]));
+    State[i * 4] = b[0];
+    State[i * 4 + 1] = b[1];
+    State[i * 4 + 2] = b[2];
+    State[i * 4 + 3] = b[3];
+  }*/
 };
 
 void AddRoundKey(int r){
