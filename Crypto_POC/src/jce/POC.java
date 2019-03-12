@@ -1,4 +1,5 @@
 package jce;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.math.BigInteger;
@@ -27,10 +28,10 @@ public class POC {
 	static CipherOutputStream cos;
 
 	public static void main(String[] args) throws Exception {
-		if (args.length != 1) {
-			System.err.println("Un seul argument autorisé (le nom de fichier de destination)!");
+		if (args.length != 2) {
+			System.err.println("Deux arguments autorisé (fichier entrée fichier sortie)!");
 			return;
-		} 
+		}
 		k = new byte[16];
 		SecureRandom rand = new SecureRandom();
 		rand.nextBytes(k);
@@ -57,24 +58,25 @@ public class POC {
 		chiffreur = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 		chiffreur.init(Cipher.ENCRYPT_MODE, clefPublique);
 
-		fos = new FileOutputStream("Crypt-poc-jce.txt");
-		cos = new CipherOutputStream(fos, chiffreur);
-
-		cos.write(k);
+		fos = new FileOutputStream(args[1]);
+		byte[] chiffre = chiffreur.doFinal(k);
+		System.out.println(chiffre.length + iv.length);
+		fos.write(chiffre);
 		fos.write(iv);
-		fos.close();cos.close();
-		
+		System.out.println("clé et vecteur init");
+
 		chiffreur = Cipher.getInstance("AES/CBC/PKCS5Padding");
 		chiffreur.init(Cipher.ENCRYPT_MODE, clefSecrete, ivspec);
 
-		fos = new FileOutputStream("Crypt-poc-jce.txt");
 		cos = new CipherOutputStream(fos, chiffreur);
 		fis = new FileInputStream(args[0]);
-		while ( ( nbOctetsLus = fis.read(buffer) ) != -1 ) {
+		while ((nbOctetsLus = fis.read(buffer)) != -1) {
 			cos.write(buffer, 0, nbOctetsLus);
 		}
-		fis.close();cos.close();fos.close();
-
+		fis.close();
+		cos.close();
+		fos.close();
+		System.out.println("fin");
 
 	}
 
