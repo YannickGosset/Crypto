@@ -18,7 +18,7 @@ public class POC {
 	static SecretKeySpec clefSecrete;
 	static Cipher chiffreur;
 	static FileInputStream fis; // Nous allons lire un fichier
-	static FileOutputStream fos; // et écrire dans un autre
+	static FileOutputStream fos; // et ï¿½crire dans un autre
 	static byte[] buffer = new byte[1024]; // par morceaux.
 	static IvParameterSpec ivspec;
 	static int nbOctetsLus;
@@ -27,7 +27,7 @@ public class POC {
 
 	public static void main(String[] args) throws Exception {
 		if (args.length != 2) {
-			System.err.println("Deux arguments autorisé (fichier entrée fichier sortie)!");
+			System.err.println("Deux arguments autorise (fichier entree fichier sortie)!");
 			return;
 		}
 		k = new byte[16];
@@ -35,7 +35,7 @@ public class POC {
 		rand.nextBytes(k);
 		iv = new byte[16];
 		rand.nextBytes(iv);
-		System.out.println("Clef utilisée: 0x" + toHex(k));
+		System.out.println("Clef utilisï¿½e: 0x" + toHex(k));
 		System.out.println("Vecteur d'initialisation: 0x" + toHex(iv));
 		clefSecrete = new SecretKeySpec(k, "AES");
 		ivspec = new IvParameterSpec(iv);
@@ -47,7 +47,7 @@ public class POC {
 				"94f28651e58a75781cfe69900174b86f855f092f09e3da2ad86b4ed964a84917e5ec60f4ee6e3adaa13962884e5cf8dae2e0d29c6168042ec9024ea11176a4ef031ac0f414918b7d13513ca1110ed80bd2532f8a7aab0314bf54fcaf621eda74263faf2a5921ffc515097a3c556bf86f2048a3c159fccfee6d916d38f7f23f21",
 				16);
 
-		// Appel à une fabrique de clefs
+		// Appel ï¿½ une fabrique de clefs
 		KeyFactory usine = KeyFactory.getInstance("RSA");
 		// Construction en 2 temps de la clef publique par la fabrique
 		RSAPublicKeySpec specClefPublique = new RSAPublicKeySpec(n, e);
@@ -61,7 +61,7 @@ public class POC {
 		System.out.println(chiffre.length + iv.length);
 		fos.write(chiffre);
 		fos.write(iv);
-		System.out.println("clé et vecteur init");
+		System.out.println("clef et vecteur init");
 
 		chiffreur = Cipher.getInstance("AES/CBC/PKCS5Padding");
 		chiffreur.init(Cipher.ENCRYPT_MODE, clefSecrete, ivspec);
